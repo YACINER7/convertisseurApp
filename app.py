@@ -11,11 +11,13 @@ rates = {
 }
 
 
-# Initialisation de l'état de session pour les devises
+# Initialisation de l'état de session pour les devises et l'historique
 if "from_currency" not in st.session_state:
     st.session_state.from_currency = "EUR"
 if "to_currency" not in st.session_state:
     st.session_state.to_currency = "USD"
+if "history" not in st.session_state:
+    st.session_state.history = []
 
 def swap_currencies():
     temp = st.session_state.from_currency
@@ -39,4 +41,21 @@ if st.button("Convertir"):
         st.error("La devise source et la devise cible ne doivent pas être identiques.")
     else:
         result = amount * rates[to_currency] / rates[from_currency]
-        st.success(f"{amount} {from_currency} = {result:.2f} {to_currency}")
+        conversion_text = f"{amount:.2f} {from_currency} ➔ {result:.2f} {to_currency}"
+        st.success(conversion_text)
+        st.session_state.history.append(conversion_text)
+
+st.markdown("---")
+st.subheader("📜 Historique des conversions")
+if st.session_state.history:
+    col_hist, col_clear = st.columns([4, 1])
+    with col_clear:
+        if st.button("Effacer l'historique"):
+            st.session_state.history = []
+            st.rerun()
+    with col_hist:
+        for item in reversed(st.session_state.history):
+            st.write(f"⏱️ {item}")
+else:
+    st.info("Aucune conversion enregistrée dans cette session.")
+
