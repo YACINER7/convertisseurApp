@@ -5,8 +5,11 @@ st.title("Convertisseur de devises")
 rates = {
     "EUR": 1,
     "USD": 1.1,
-    "JPY": 130
+    "JPY": 130,
+    "GBP": 0.85,
+    "CAD": 1.5
 }
+
 
 # Initialisation de l'état de session pour les devises
 if "from_currency" not in st.session_state:
