@@ -13,5 +13,8 @@ from_currency = st.selectbox("De :", rates.keys())
 to_currency = st.selectbox("Vers :", rates.keys())
 
 if st.button("Convertir"):
-    result = amount * rates[to_currency] / rates[from_currency]
-    st.success(f"{amount} {from_currency} = {result:.2f} {to_currency}")
+    if amount <= 0:
+        st.error("Le montant doit être supérieur à zéro.")
+    else:
+        result = amount * rates[to_currency] / rates[from_currency]
+        st.success(f"{amount} {from_currency} = {result:.2f} {to_currency}")
