@@ -56,7 +56,7 @@ else:
             st.session_state.history.append(conversion_text)
 
     st.markdown("---")
-    st.subheader("📜 Historique des conversions")
+    st.subheader("Historique des conversions")
     if st.session_state.history:
         col_hist, col_clear = st.columns([4, 1])
         with col_clear:
