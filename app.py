@@ -1,23 +1,16 @@
 import streamlit as st
-import requests
+from app_functions import get_rates, convert
 
-API_KEY = "2a924481071b02bcdbd8ac49"  # Remplacer par votre clé sur https://www.exchangerate-api.com
+API_KEY = "2a924481071b02bcdbd8ac49"
 
 st.title("Convertisseur de devises")
 
-@st.cache_data(ttl=3600)
-def get_rates(base="EUR"):
-    url = f"https://v6.exchangerate-api.com/v6/{API_KEY}/latest/{base}"
-    response = requests.get(url)
-    data = response.json()
-    if data["result"] != "success":
-        return None
-    return data["conversion_rates"]
-
-rates = get_rates("EUR")
+rates = st.cache_data(ttl=3600)(get_rates)(API_KEY)
 
 if rates is None:
-    st.error("Impossible de récupérer les taux de change. Vérifiez votre clé API.")
+    st.error(
+        "Impossible de récupérer les taux de change. Vérifiez votre clé API."
+    )
 else:
     devises = ["EUR", "USD", "JPY", "GBP", "CAD"]
 
@@ -47,11 +40,14 @@ else:
         if amount <= 0:
             st.error("Le montant doit être supérieur à zéro.")
         elif from_currency == to_currency:
-            st.error("La devise source et la devise cible ne doivent pas être identiques.")
+            st.error(
+                "La devise source et la cible ne doivent pas être identiques."
+            )
         else:
-            rate = rates[to_currency] / rates[from_currency]
-            result = amount * rate
-            conversion_text = f"{amount:.2f} {from_currency} ➔ {result:.2f} {to_currency}"
+            result = convert(amount, from_currency, to_currency, rates)
+            conversion_text = (
+                f"{amount:.2f} {from_currency} ➔ {result:.2f} {to_currency}"
+            )
             st.success(conversion_text)
             st.session_state.history.append(conversion_text)
 
